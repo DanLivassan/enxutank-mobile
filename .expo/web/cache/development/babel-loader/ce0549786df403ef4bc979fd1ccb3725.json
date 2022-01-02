@@ -1,1 +1,0 @@
-{"ast":null,"code":"export var APP_STORAGE_TOKEN = '@enxutank-token';","map":{"version":3,"sources":["/home/dan/danXCode/mobile/enxutank-mobile/constants/user.constants.js"],"names":["APP_STORAGE_TOKEN"],"mappings":"AAAA,OAAO,IAAMA,iBAAiB,GAAG,iBAA1B","sourcesContent":["export const APP_STORAGE_TOKEN = '@enxutank-token'"]},"metadata":{},"sourceType":"module"}
