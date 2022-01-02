@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import InputValidated from "../components/InputValidated";
+import { useAuth } from "../../context/auth.context";
 const Fields = [
     {
         name: 'email',
@@ -36,11 +37,18 @@ const Fields = [
     },
 ]
 export default function SignIn() {
+    const { performLogin } = useAuth()
     const { handleSubmit, control, formState: { errors } } = useForm();
     const createUser = (data) => {
-        console.log(data)
+        const { email, password } = data;
         const f = async () => {
-            await authService.create_user(data)
+            const success = await performLogin({ email, password })
+            if (success) {
+                console.log("Logado com sucesso")
+            }
+            else {
+                console.log("Erro ao logar")
+            }
         }
         f();
 

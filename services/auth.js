@@ -1,18 +1,40 @@
-import axios from 'axios';
-import { api } from './api';
-export const create_user = (user_data) => {
+import api from './api';
 
-    api.post('api/user/create/', user_data).then(res => { console.log(res) })
-}
 
-export const create_token = (data) => {
-    return api.post('api/user/token/', data).then(response => {
-        return response.data
+
+export const createUser = (user_data) => {
+
+    return api.post('api/user/create/', user_data).then(res => {
+        return { errors: false, data: res.data };
     }).catch(e => {
-        return { error }
+        if (e.response) {
+            return { errors: true, data: e.response.data }
+        }
+        return { errors: false, data: e }
+
     })
 }
 
-export const get_me = (token) => {
+export const createToken = (data) => {
+    return api.post('api/user/token/', data).then(response => {
+        if (response.status == 200) {
+            return response.data
+        }
+    }).catch(e => {
+        if (e.response) {
+            console.log(e.response)
+        }
+    })
+}
 
+export const getMe = () => {
+    return api.get('api/user/me/').then((res) => {
+        return res.data
+    }).catch(e => {
+        return false
+    })
+}
+
+export const updateToken = (token) => {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`
 }

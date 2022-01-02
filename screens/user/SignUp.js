@@ -58,7 +58,18 @@ export default function SignUp() {
     const { handleSubmit, control, formState: { errors } } = useForm();
     const createUser = (data) => {
         const f = async () => {
-            await authService.create_user(data)
+            const res = await authService.createUser(data)
+            if (!res.errors) {
+                console.log("Usuário criado com sucesso")
+            }
+            else {
+                let errors = []
+                Fields.map(field => {
+                    if (res.data[[field.name]])
+                        errors.push(JSON.stringify(res.data[[field.name]]))
+                })
+                console.log(errors)
+            }
         }
         f()
     }

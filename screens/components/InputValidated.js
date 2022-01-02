@@ -1,6 +1,6 @@
 import React from 'react'
 import { Controller } from 'react-hook-form'
-import { TextInput, Text } from 'react-native'
+import { TextInput } from 'react-native'
 
 const InputValidated = ({
     name,
