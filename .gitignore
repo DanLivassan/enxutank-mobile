@@ -29,7 +29,10 @@ build/
 .gradle
 local.properties
 *.iml
-.expo/web/cache/
+# Expo
+.expo
+__generated__
+web-build
 # node.js
 #
 node_modules/
