@@ -1,14 +1,17 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, Icon } from 'react-native-elements';
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome'
 import { useAuth } from './context/auth.context';
 import SignIn from './screens/user/SignIn';
 import SignUp from './screens/user/SignUp';
 import Home from './screens/user/Home';
+import MapDirection from './screens/user/MapDirection';
+
 const Stack = createNativeStackNavigator()
 const AppAuth = () => {
-    const { user, token } = useAuth();
+    const { user, token, performLogout } = useAuth();
     if (token) {
         return (
             <NavigationContainer>
@@ -16,7 +19,28 @@ const AppAuth = () => {
                     <Stack.Screen
                         name={Home.name}
                         component={Home}
-                        options={{ title: "Home" }}
+                        options={({ navigation }) => {
+                            return {
+                                title: "Home",
+                                headerRight: () => (<Button
+                                    type="clear"
+                                    onPress={performLogout}
+                                    icon={<Icon name="arrow-right" color="#fff" size={25} />}
+                                >
+                                </Button>),
+                            }
+                        }
+                        }
+                    />
+                    <Stack.Screen
+                        name={MapDirection.name}
+                        component={MapDirection}
+                        options={({ navigation }) => {
+                            return {
+                                title: "Rota",
+                            }
+                        }
+                        }
                     />
 
                 </Stack.Navigator>
@@ -40,13 +64,14 @@ const AppAuth = () => {
                             headerRight: () => (<Button
                                 type="clear"
                                 onPress={() => navigation.push(SignUp.name)}
-                                icon={<Icon name="add" size={25} />}
+                                icon={<Icon name="plus-circle" size={25} color="white" />}
                             >
                             </Button>),
                         }
                     }
                     }
                 />
+
             </Stack.Navigator>
         </NavigationContainer>
     )

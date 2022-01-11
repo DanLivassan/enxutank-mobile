@@ -1,31 +1,46 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar } from 'react-native';
-import { Button } from 'react-native-elements';
+import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as fuelService from '../../services/fuel';
 import millify from 'millify';
 import moment from 'moment';
 import { useAuth } from '../../context/auth.context';
-
-const Item = ({ title, price, name, date }) => (
-    <View style={styles.item}>
-        <View style={styles.iconView}>
-            <Icon style={styles.icon} name="map"></Icon>
-        </View>
-        <View style={styles.dataView}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.price}>R$ {millify(price, { precision: 2, decimalSeparator: ',' })}</Text>
-            <Text style={styles.date}>Atualizado {moment(date).locale('pt-BR').fromNow()}</Text>
-        </View>
-    </View>
-);
+import { distanceBetween } from '../../utils/location.helper';
+import MapDirection from './MapDirection';
 
 
-const Home = () => {
+
+
+const Home = ({ navigation }) => {
+    const goToDirection = (origin, destination) => {
+        navigation.push(MapDirection.name,
+            {
+                origin: { latitude: origin.lat, longitude: origin.lng },
+                destination: { latitude: destination.lat, longitude: destination.lng },
+            })
+    }
+
+    const Item = ({ title, price, name, date, coords, userCoords }) => (
+        <TouchableHighlight onPress={() => goToDirection(userCoords, coords)} >
+            <View style={styles.item}>
+                <View style={styles.iconView} >
+                    <Icon style={styles.icon} name="map"></Icon>
+                </View>
+                <View style={styles.dataView}>
+                    <Text style={styles.title}>{title}</Text>
+                    <Text style={styles.name}>{name}</Text>
+                    <Text style={styles.price}>R$ {millify(price, { precision: 2, decimalSeparator: ',' })}</Text>
+                    <Text style={styles.date}>Atualizado {moment(date).locale('pt-BR').fromNow()}</Text>
+                    <Text>Distância: {isNaN(distanceBetween(coords, userCoords)) ? "" : millify(distanceBetween(coords, userCoords))}m</Text>
+                </View>
+            </View>
+        </TouchableHighlight >
+
+    );
     const [fuels, setFuels] = useState([])
     const { location } = useAuth();
-    console.log(location)
+    const userCoords = { lat: location.coords?.latitude, lng: location.coords?.longitude }
+
     useEffect(() => {
         const fetchData = async () => {
             const fuel_prices = await fuelService.getAll()
@@ -38,7 +53,15 @@ const Home = () => {
             <VirtualizedList
                 data={fuels}
                 initialNumToRender={4}
-                renderItem={({ item }) => <Item title={item.gas_station} name={item.name} price={item.price} date={item.registered_date} />}
+                renderItem={({ item }) => (
+                    <Item
+                        title={item.gas_station}
+                        name={item.name}
+                        price={item.price}
+                        date={item.registered_date}
+                        coords={{ lat: item.latitude, lng: item.longitude }}
+                        userCoords={userCoords}
+                    />)}
                 keyExtractor={item => item.id}
                 getItemCount={(data) => data.length}
                 getItem={(data, index) => {
@@ -53,6 +76,13 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: StatusBar.currentHeight,
     },
+    iconView: {
+        paddingLeft: 20,
+        paddingRight: 20,
+        alignContent: "center",
+        textAlignVertical: "center"
+    },
+
     icon: {
         width: 20,
         fontSize: 40,
@@ -69,13 +99,13 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     title: {
-        fontSize: 28,
+        fontSize: 18,
     },
     name: {
-        fontSize: 20,
+        fontSize: 14,
     },
     price: {
-        fontSize: 24,
+        fontSize: 14,
         fontWeight: 'bold'
     },
     date: {

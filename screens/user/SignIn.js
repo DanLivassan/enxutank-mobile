@@ -77,7 +77,7 @@ export default function SignIn() {
                 }
 
                 <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit(createUser)}>
-                    <Text style={styles.loginText}>REGISTRAR-SE</Text>
+                    <Text style={styles.loginText}>ENTRAR</Text>
                 </TouchableOpacity>
             </ImageBackground>
         </View >
