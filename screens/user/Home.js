@@ -1,59 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar, TouchableHighlight } from 'react-native';
+import { SafeAreaView, View, VirtualizedList, StyleSheet, Text, StatusBar, TouchableHighlight, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as fuelService from '../../services/fuel';
-import getDirections from 'react-native-google-maps-directions'
 import millify from 'millify';
 import moment from 'moment';
 import { useAuth } from '../../context/auth.context';
 import { distanceBetween } from '../../utils/location.helper';
-import MapDirection from './MapDirection';
-import * as directionsService from '../../services/gmaps';
 import { useFuelContext } from '../../context/fuel.context';
+import { goToDirection } from '../../services/directions.gmaps';
+import GoogleAutoComplete from '../components/GoogleAutoComplete';
 
 
 
 const Home = ({ navigation }) => {
-    const { setFuels, fuels } = useFuelContext()
-    const goToDirection = (origin, destination, userCoords) => {
-        navigation.push(MapDirection.name,
-            {
-                origin: { latitude: origin.lat, longitude: origin.lng },
-                destination: { latitude: destination.lat, longitude: destination.lng },
-                userCoords: userCoords
-            })
-    }
-
-    // const goToDirection = (origin, destination) => {
-    //     const data = {
-    //         source: {
-    //             latitude: origin.lat,
-    //             longitude: origin.lng
-    //         },
-    //         destination: {
-    //             latitude: destination.lat,
-    //             longitude: destination.lng
-    //         },
-    //         params: [
-    //             {
-    //                 key: "travelmode",
-    //                 value: "driving"        // may be "walking", "bicycling" or "transit" as well
-    //             },
-    //             {
-    //                 key: "dir_action",
-    //                 value: "navigate"       // this instantly initializes navigation using the given travel mode
-    //             }
-    //         ],
-
-    //     }
-    //     getDirections(data)
+    const { setFuels, fuels } = useFuelContext();
+    const [searching, setSearching] = useState(false);
+    // const goToDirection = (origin, destination, userCoords) => {
+    //     navigation.push(MapDirection.name,
+    //         {
+    //             origin: { latitude: origin.lat, longitude: origin.lng },
+    //             destination: { latitude: destination.lat, longitude: destination.lng },
+    //             userCoords: userCoords
+    //         })
     // }
 
+
     useEffect(() => {
-        const f = async () => {
-            await directionsService.getDirections()
-        }
-        f()
+
     }, [])
 
     const Item = ({ title, price, name, date, coords, userCoords }) => (
@@ -84,27 +57,41 @@ const Home = ({ navigation }) => {
         }
         fetchData();
     }, [])
+
+
     return (
-        <SafeAreaView style={styles.container}>
-            <VirtualizedList
-                data={fuels}
-                initialNumToRender={4}
-                renderItem={({ item }) => (
-                    <Item
-                        title={item.gas_station}
-                        name={item.name}
-                        price={item.price}
-                        date={item.registered_date}
-                        coords={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
-                        userCoords={userCoords}
-                    />)}
-                keyExtractor={item => item.id}
-                getItemCount={(data) => data.length}
-                getItem={(data, index) => {
-                    return data[index]
-                }}
+        <>
+            <Button
+                title={!searching ? 'Pesquisar' : "Ver postos"}
+                onPress={() => { setSearching(!searching) }}
             />
-        </SafeAreaView>
+
+
+            {searching ? (<View style={styles.searchField}>
+                {<GoogleAutoComplete />}
+            </View>) : null}
+            {!searching ? <SafeAreaView style={styles.container}>
+
+                <VirtualizedList
+                    data={fuels}
+                    initialNumToRender={4}
+                    renderItem={({ item }) => (
+                        <Item
+                            title={item.gas_station}
+                            name={item.name}
+                            price={item.price}
+                            date={item.registered_date}
+                            coords={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
+                            userCoords={userCoords}
+                        />)}
+                    keyExtractor={item => item.id}
+                    getItemCount={(data) => data.length}
+                    getItem={(data, index) => {
+                        return data[index]
+                    }}
+                />
+            </SafeAreaView> : null}
+        </>
     );
 }
 const styles = StyleSheet.create({
@@ -147,6 +134,10 @@ const styles = StyleSheet.create({
     date: {
         fontStyle: 'italic',
         color: "#bfbfbf"
+    },
+    searchField: {
+        padding: 10,
+
     }
 });
 export default Home

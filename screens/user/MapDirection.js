@@ -8,7 +8,6 @@ import { useFuelContext } from '../../context/fuel.context';
 const { height, width } = Dimensions.get('window');
 const MapDirection = (params) => {
     const { fuels, directionCoordinates, setDirectionCoordinates } = useFuelContext();
-    console.log(fuels)
     const { origin, destination } = (params.route.params)
     const map = useRef()
 
