@@ -1,5 +1,7 @@
 import AppAuth from "./AppAuth";
 import { UserProvider } from "./context/auth.context";
+import { FuelProvider } from "./context/fuel.context";
+import { GasStationProvider } from "./context/gas_station.context";
 
 export const provider = (provider, props = {}) => [provider, props];
 export const ProviderComposer = ({ providers, children }) => {
@@ -18,7 +20,9 @@ export default function App() {
   return (
     <ProviderComposer
       providers={[
-        provider(UserProvider)
+        provider(UserProvider),
+        provider(GasStationProvider),
+        provider(FuelProvider)
       ]}
     >
       <AppAuth></AppAuth>
