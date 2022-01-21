@@ -10,6 +10,7 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({ name: {} })
     const [token, setToken] = useState(null)
     const [location, setLocation] = useState("-12, -14")
+    const [destination, setDestination] = useState(null)
 
     const performLogin = ({ email, password }) => {
         const f = async () => {
@@ -69,6 +70,8 @@ export const UserProvider = ({ children }) => {
                 location,
                 updateLocation,
                 performLogout,
+                destination,
+                setDestination,
             }}
         >
             {children}

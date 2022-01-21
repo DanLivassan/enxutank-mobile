@@ -1,27 +1,31 @@
 import React, { useEffect } from 'react'
 import { GOOGLE_MAPS_APIKEY } from '@env'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { useAuth } from '../../context/auth.context';
 
 const GoogleAutoComplete = () => {
-
+    const { setDestination } = useAuth()
     useEffect(() => {
-        console.log("creating autocomplte")
     })
 
     return (
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps={"always"}>
             <GooglePlacesAutocomplete
                 placeholder='Informe sua rota de hoje'
-                onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log(data, details);
+                keepResultsAfterBlur={true}
+                onPress={(data, details) => {
+                    const { lat, lng } = details.geometry.location;
+                    setDestination({ lat, lng })
                 }}
-                listViewDisplayed={false}
-                keyboardShouldPersistTaps='always'
+                // listViewDisplayed={true}
+                fetchDetails={true}
+                keyboardShouldPersistTaps={"always"}
+                // currentLocation={"Brazil"}
                 query={{
                     key: GOOGLE_MAPS_APIKEY,
                     language: 'pt-BR',
+                    location: 'Brazil'
                 }}
             />
         </ScrollView>

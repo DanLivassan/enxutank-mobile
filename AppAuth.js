@@ -8,15 +8,18 @@ import SignIn from './screens/user/SignIn';
 import SignUp from './screens/user/SignUp';
 import Home from './screens/user/Home';
 import MapDirection from './screens/user/MapDirection';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import GetDirections from './screens/user/GetDirections';
 
-const Stack = createNativeStackNavigator()
+
+const Drawer = createDrawerNavigator()
 const AppAuth = () => {
     const { user, token, performLogout } = useAuth();
     if (token) {
         return (
             <NavigationContainer>
-                <Stack.Navigator initialRouteName={Home.name} screenOptions={screenOptions}>
-                    <Stack.Screen
+                <Drawer.Navigator initialRouteName={Home.name} screenOptions={screenOptions}>
+                    <Drawer.Screen
                         name={Home.name}
                         component={Home}
                         options={({ navigation }) => {
@@ -32,30 +35,41 @@ const AppAuth = () => {
                         }
                         }
                     />
-                    <Stack.Screen
+                    <Drawer.Screen
+                        name={"Buscar uma rota"}
+                        component={GetDirections}
+                        options={({ navigation }) => {
+                            return {
+                                title: "Buscar",
+                            }
+                        }
+                        }
+                    />
+                    <Drawer.Screen
                         name={MapDirection.name}
                         component={MapDirection}
                         options={({ navigation }) => {
                             return {
                                 title: "Rota",
+                                drawerLabel: () => null
                             }
                         }
                         }
                     />
 
-                </Stack.Navigator>
+                </Drawer.Navigator>
             </NavigationContainer>
         )
     }
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={SignIn.name} screenOptions={screenOptions}>
-                <Stack.Screen
+            <Drawer.Navigator initialRouteName={SignIn.name} screenOptions={screenOptions}>
+                <Drawer.Screen
                     name={SignUp.name}
                     component={SignUp}
                     options={{ title: "Registrar-se" }}
                 />
-                <Stack.Screen
+                <Drawer.Screen
                     name={SignIn.name}
                     component={SignIn}
                     options={({ navigation }) => {
@@ -72,7 +86,7 @@ const AppAuth = () => {
                     }
                 />
 
-            </Stack.Navigator>
+            </Drawer.Navigator>
         </NavigationContainer>
     )
 }
