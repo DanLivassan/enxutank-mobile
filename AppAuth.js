@@ -10,6 +10,7 @@ import Home from './screens/user/Home';
 import MapDirection from './screens/user/MapDirection';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import GetDirections from './screens/user/GetDirections';
+import CustomDrawer from './navigator/CustomDrawer';
 
 
 const Drawer = createDrawerNavigator()
@@ -18,19 +19,16 @@ const AppAuth = () => {
     if (token) {
         return (
             <NavigationContainer>
-                <Drawer.Navigator initialRouteName={Home.name} screenOptions={screenOptions}>
+                <Drawer.Navigator initialRouteName={Home.name} screenOptions={screenOptions} drawerContent={props => <CustomDrawer {...props} />}>
                     <Drawer.Screen
                         name={Home.name}
                         component={Home}
                         options={({ navigation }) => {
                             return {
                                 title: "Home",
-                                headerRight: () => (<Button
-                                    type="clear"
-                                    onPress={performLogout}
-                                    icon={<Icon name="arrow-right" color="#fff" size={25} />}
-                                >
-                                </Button>),
+                                drawerIcon: () => {
+                                    return <Icon name="home" color={'#fff'} size={20}></Icon>
+                                },
                             }
                         }
                         }
@@ -41,6 +39,9 @@ const AppAuth = () => {
                         options={({ navigation }) => {
                             return {
                                 title: "Buscar",
+                                drawerIcon: () => {
+                                    return <Icon name="search" color={'#fff'} size={20}></Icon>
+                                },
                             }
                         }
                         }
@@ -86,9 +87,16 @@ const AppAuth = () => {
                     }
                 />
 
+
             </Drawer.Navigator>
         </NavigationContainer>
     )
 }
-const screenOptions = { headerStyle: { backgroundColor: '#db4a39' }, headerTintColor: '#fff' }
+const screenOptions = {
+    headerStyle: { backgroundColor: '#db4a39' },
+    headerTintColor: '#fff',
+    drawerActiveBackgroundColor: "#ca3028",
+    drawerActiveTintColor: "#fff",
+    drawerInactiveTintColor: "#fff",
+}
 export default AppAuth

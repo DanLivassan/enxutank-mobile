@@ -7,8 +7,9 @@ import { distanceBetween } from '../../utils/location.helper';
 import { useFuelContext } from '../../context/fuel.context';
 
 const { height, width } = Dimensions.get('window');
+import green_pin from '../../assets/green_pin.png'
 const MapDirection = ({ origin, destination }) => {
-    const { fuels, directionCoordinates, setDirectionCoordinates } = useFuelContext();
+    const { fuels, directionCoordinates, setDirectionCoordinates, mean_price } = useFuelContext();
     const map = useRef()
     const [gas_station_marks, setGasStationMarks] = useState([])
     useEffect(() => {
@@ -22,12 +23,21 @@ const MapDirection = ({ origin, destination }) => {
         n_gas_station_marks = n_gas_station_marks.filter(gas_station => gas_station)
         setGasStationMarks(n_gas_station_marks)
     }, [directionCoordinates])
-    console.warn(gas_station_marks)
     const origin_parsed = { latitude: origin.coords.latitude, longitude: origin.coords.longitude }
     return (
         <View style={styles.container}>
             <MapView ref={m => { map.current = m }} style={styles.map} >
-                {/* {gas_station_marks.map((marker, key) => <Marker key={key} coordinates={{ latitude: marker.fuel.latitude, longitude: marker.fuel.longitude }} />)} */}
+                {gas_station_marks.map((marker, key) => (
+                    <Marker
+                        key={key}
+
+                        coordinate={{ latitude: parseFloat(marker.fuel.latitude), longitude: parseFloat(marker.fuel.longitude) }}
+                        title={`R$ ${marker.fuel.price}`}
+                        description={`${marker.fuel.name} em ${marker.fuel.gas_station}`}
+                        image={mean_price < marker.fuel.price ? green_pin : null}
+                    />))}
+
+
                 <MapViewDirections
                     origin={origin_parsed}
                     destination={{ latitude: destination.lat, longitude: destination.lng }}
@@ -35,7 +45,7 @@ const MapDirection = ({ origin, destination }) => {
                     strokeWidth={3}
                     language="pt-BR"
                     mode="DRIVING"
-                    strokeColor="hotpink"
+                    strokeColor="blue"
                     onReady={result => {
                         setDirectionCoordinates(result.coordinates)
                         map.current.fitToCoordinates(result.coordinates, {

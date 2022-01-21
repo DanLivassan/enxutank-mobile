@@ -12,7 +12,7 @@ import GasStationItem from '../components/GasStationItem';
 const Home = ({ navigation }) => {
     const { setFuels, fuels } = useFuelContext();
     const [searching, setSearching] = useState(false);
-
+    const [state, setState] = useState({ refreshing: false })
 
     useEffect(() => {
 
@@ -24,8 +24,10 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setState({ ...state, refreshing: true })
             const fuel_prices = await fuelService.getAll()
             setFuels(fuel_prices)
+            setState({ ...state, refreshing: false })
         }
         fetchData();
     }, [])
@@ -33,12 +35,10 @@ const Home = ({ navigation }) => {
 
     return (
         <>
-            {searching ? (<View style={styles.searchField}>
-                {<GoogleAutoComplete />}
-            </View>) : null}
-            {!searching ? <SafeAreaView style={styles.container}>
+            <SafeAreaView style={styles.container}>
 
                 <VirtualizedList
+                    refreshing={state.refreshing}
                     data={fuels}
                     initialNumToRender={4}
                     renderItem={({ item }) => (
@@ -56,7 +56,7 @@ const Home = ({ navigation }) => {
                         return data[index]
                     }}
                 />
-            </SafeAreaView> : null}
+            </SafeAreaView>
         </>
     );
 }
