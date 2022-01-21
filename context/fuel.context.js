@@ -21,6 +21,7 @@ export const FuelProvider = ({ children }) => {
                 setFuels,
                 directionCoordinates,
                 setDirectionCoordinates,
+                mean_price
             }}
         >
             {children}
